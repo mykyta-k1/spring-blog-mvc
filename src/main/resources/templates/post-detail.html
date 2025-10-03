@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${post.title}">Post</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    .background {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+    }
+    .shape:first-child {
+      width: 300px;
+      height: 300px;
+      background: linear-gradient(#5ee7df, #b490ca);
+      left: -150px;
+      top: -150px;
+    }
+    .shape:last-child {
+      width: 250px;
+      height: 250px;
+      background: linear-gradient(to right, #ff512f, #f09819);
+      right: -125px;
+      bottom: -125px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 30px;
+      position: relative;
+      z-index: 1;
+    }
+    .post-section {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      padding: 40px;
+    }
+    .post-title {
+      color: white;
+      font-size: 36px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .post-meta {
+      display: flex;
+      gap: 20px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+    .post-content {
+      color: rgba(255, 255, 255, 0.95);
+      font-size: 16px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+    .edit-section {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      padding: 30px;
+      position: sticky;
+      top: 20px;
+      height: fit-content;
+    }
+    .edit-section h2 {
+      color: white;
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    label {
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      display: block;
+      margin-bottom: 8px;
+    }
+    input, textarea {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 12px;
+      color: white;
+      font-size: 14px;
+      margin-bottom: 15px;
+      font-family: 'Poppins', sans-serif;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 200px;
+    }
+    button {
+      width: 100%;
+      height: 45px;
+      background: white;
+      color: #667eea;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    .back-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 8px;
+      display: inline-block;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    .no-edit {
+      color: rgba(255, 255, 255, 0.7);
+      text-align: center;
+      padding: 40px;
+    }
+
+    @media (max-width: 1024px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="background">
+  <div class="shape"></div>
+  <div class="shape"></div>
+</div>
+
+<div class="container">
+  <!-- Post Content -->
+  <div class="post-section">
+    <a th:href="@{/posts}" class="back-btn">← Back to Posts</a>
+
+    <h1 class="post-title" th:text="${post.title}">Post Title</h1>
+
+    <div class="post-meta">
+      <span>by <strong th:text="${post.author.username}">Author</strong></span>
+      <span th:text="${#temporals.format(post.createdAt, 'dd MMMM yyyy')}">Date</span>
+    </div>
+
+    <div class="post-content" th:text="${post.content}">Post content here...</div>
+  </div>
+
+  <!-- Edit Form (only for owner) -->
+  <div class="edit-section" th:if="${isOwner}">
+    <h2>Edit Post</h2>
+    <form th:action="@{/posts/{slug}/update(slug=${post.slug})}" method="post">
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" th:value="${post.title}" required maxlength="100">
+
+      <label for="content">Content</label>
+      <textarea id="content" name="content" required maxlength="5000" th:text="${post.content}"></textarea>
+
+      <button type="submit">Update Post</button>
+    </form>
+  </div>
+
+  <!-- Message for non-owners -->
+  <div class="edit-section" th:unless="${isOwner}">
+    <div class="no-edit">
+      You can only edit your own posts
+    </div>
+  </div>
+</div>
+</body>
+</html>

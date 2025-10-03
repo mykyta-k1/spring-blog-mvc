@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Posts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+    .background {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+    }
+    .shape:first-child {
+      width: 300px;
+      height: 300px;
+      background: linear-gradient(#5ee7df, #b490ca);
+      left: -150px;
+      top: -150px;
+    }
+    .shape:last-child {
+      width: 250px;
+      height: 250px;
+      background: linear-gradient(to right, #ff512f, #f09819);
+      right: -125px;
+      bottom: -125px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 40px auto;
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 30px;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .posts-section {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      padding: 30px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .posts-section h2 {
+      color: white;
+      font-size: 28px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+    .post-card {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 15px;
+      transition: all 0.3s;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .post-card:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+    .post-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .post-title {
+      color: white;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .post-date {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 12px;
+    }
+    .post-content {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+    .post-author {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 13px;
+      font-style: italic;
+    }
+    .user-greeting {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      padding: 12px 20px;
+      color: white;
+      font-size: 14px;
+      z-index: 10;
+    }
+    .create-section {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      padding: 30px;
+      position: sticky;
+      top: 20px;
+      height: fit-content;
+    }
+    .create-section h2 {
+      color: white;
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    label {
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      display: block;
+      margin-bottom: 8px;
+    }
+    h4 {
+      color: white;
+      z-index: 2;
+    }
+    input, textarea {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 12px;
+      color: white;
+      font-size: 14px;
+      margin-bottom: 15px;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+    input::placeholder, textarea::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+    button {
+      width: 100%;
+      height: 45px;
+      background: white;
+      color: #667eea;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    .logout-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: auto;
+      padding: 0 20px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      z-index: 10;
+    }
+    .logout-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .pagination a {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .pagination a:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    .pagination .active {
+      background: white;
+      color: #667eea;
+    }
+    .empty-state {
+      color: rgba(255, 255, 255, 0.7);
+      text-align: center;
+      padding: 40px;
+      font-size: 16px;
+    }
+
+    @media (max-width: 1024px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+      .create-section {
+        position: relative;
+        top: 0;
+      }
+    }
+  </style>
+  <script>
+    fetch('/user/info')
+    .then(r => r.json())
+    .then(user =>
+        document.getElementById('user-username').innerText = `Welcome, ${user.username}!`)
+    .catch(() => document.getElementById('user-username').innerText = `Error loading user`)
+  </script>
+</head>
+<body>
+<div class="background">
+  <div class="shape"></div>
+  <div class="shape"></div>
+</div>
+
+<div class="user-greeting">
+  <span id="user-username">Loading...</span>
+</div>
+<button class="logout-btn" onclick="window.location.href='/logout'">Logout</button>
+
+<div class="container">
+  <!-- Posts List -->
+  <div class="posts-section">
+    <h2>All Posts</h2>
+
+    <div th:if="${postsPage.content.isEmpty()}" class="empty-state">
+      No posts yet. Create your first post!
+    </div>
+
+    <!-- Print all posts -->
+    <a th:each="post : ${postsPage.content}" th:href="@{/posts/{slug}(slug=${post.slug})}"
+       style="text-decoration: none;">
+      <div class="post-card">
+        <div class="post-header">
+          <h3 class="post-title" th:text="${post.title}">Post Title</h3>
+          <span class="post-date" th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy')}">Date</span>
+        </div>
+        <p class="post-content" th:text="${post.content}">Post content...</p>
+        <p class="post-author">by <span th:text="${post.author.username}">Author</span></p>
+      </div>
+    </a>
+
+    <!-- Pagination -->
+    <div class="pagination" th:if="${postsPage.totalPages > 1}">
+      <a th:if="${!postsPage.first}"
+         th:href="@{/posts(page=${postsPage.number - 1}, size=${postsPage.size})}">Previous</a>
+
+      <a th:each="i : ${#numbers.sequence(0, postsPage.totalPages - 1)}"
+         th:href="@{/posts(page=${i}, size=${postsPage.size})}"
+         th:text="${i + 1}"
+         th:classappend="${i == postsPage.number} ? 'active'">1</a>
+
+      <a th:if="${!postsPage.last}"
+         th:href="@{/posts(page=${postsPage.number + 1}, size=${postsPage.size})}">Next</a>
+    </div>
+  </div>
+
+  <!-- Create Post Form -->
+  <div class="create-section">
+    <h2>Create New Post</h2>
+    <form th:action="@{/posts/add-post}" method="post">
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" placeholder="Enter post title" required maxlength="100">
+
+      <label for="content">Content</label>
+      <textarea id="content" name="content" placeholder="Write your post content..." required maxlength="5000"></textarea>
+
+      <button type="submit">Publish Post</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

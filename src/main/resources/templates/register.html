@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .background {
+      position: absolute;
+      width: 22%;
+      height: 66%;
+      z-index: -2;
+    }
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+    }
+    .shape:first-child {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(#5ee7df, #b490ca);
+      left: -50px;
+      top: -50px;
+    }
+    .shape:last-child {
+      width: 150px;
+      height: 150px;
+      background: linear-gradient(to right, #ff512f, #f09819);
+      right: -75px;
+      bottom: -75px;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      padding: 50px 40px;
+      width: 400px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      position: relative;
+      z-index: 1;
+    }
+    h3 {
+      color: white;
+      font-size: 32px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    label {
+      color: white;
+      font-size: 16px;
+      font-weight: 500;
+      display: block;
+      margin-bottom: 8px;
+    }
+    input {
+      width: 100%;
+      height: 50px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 0 15px;
+      color: white;
+      font-size: 14px;
+      margin-bottom: 15px;
+      transition: all 0.3s;
+    }
+    input:focus {
+      outline: none;
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+    button {
+      width: 100%;
+      height: 50px;
+      background: white;
+      color: #667eea;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    .link {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .link a {
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+<div class="background">
+  <div class="shape"></div>
+  <div class="shape"></div>
+</div>
+
+<div class="container">
+  <form th:action="@{/auth/register}" method="post">
+    <h3>Register</h3>
+
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" placeholder="Enter username" required>
+
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" placeholder="Enter email" required>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" placeholder="Enter password" required>
+
+    <button type="submit">Register</button>
+
+    <div class="link">
+      <a th:href="@{/auth/login}">Already have an account? Login</a>
+    </div>
+  </form>
+</div>
+</body>
+</html>
