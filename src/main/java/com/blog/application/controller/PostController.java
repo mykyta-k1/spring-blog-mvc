@@ -8,20 +8,17 @@ import com.blog.domain.User;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.Banner.Mode;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -45,11 +42,10 @@ public class PostController {
     }
 
     @GetMapping("/{slug}")
-    public String getPostBySlug(Model model, @PathVariable String slug) {
+    public String getPostBySlug(
+        Model model, @AuthenticationPrincipal User user, @PathVariable String slug) {
         PostResponseDto post = postService.findBySlug(slug);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = (User) auth.getPrincipal();
-        boolean isOwner = post.getAuthor().getId().equals(currentUser.getId());
+        boolean isOwner = post.author().id().equals(user.getId());
 
         model.addAttribute("post", post);
         model.addAttribute("isOwner", isOwner);
@@ -63,12 +59,13 @@ public class PostController {
     }
 
     @PostMapping("/{slug}/update")
-    public String updatePost(Model model, @PathVariable String slug, @Validated PostUpdateRequest dto) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = (User) auth.getPrincipal();
+    public String updatePost(
+        Model model, @AuthenticationPrincipal User user, @PathVariable String slug,
+        @Validated PostUpdateRequest dto
+    ) {
+        PostResponseDto post = postService.update(slug, dto, user.getId());
+        boolean isOwner = post.author().id().equals(user.getId());
 
-        PostResponseDto post = postService.update(slug, dto, currentUser.getId());
-        boolean isOwner = post.getAuthor().getId().equals(currentUser.getId());
         model.addAttribute("post", post);
         model.addAttribute("isOwner", isOwner);
         return "redirect:/posts";

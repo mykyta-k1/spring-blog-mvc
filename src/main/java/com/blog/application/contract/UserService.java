@@ -29,5 +29,5 @@ public interface UserService {
 
     void checkUserAndPassword(String email, String password);
 
-    UserShortDto getCurrentUserInfo();
+    UserShortDto getCurrentUserInfo(User user);
 }

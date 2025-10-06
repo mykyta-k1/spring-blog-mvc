@@ -23,10 +23,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserDao userDao;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserMapper userMapper;
     private final PostMapper postMapper;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    private final UserDao userDao;
 
     @Transactional
     @Override
@@ -76,10 +76,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserShortDto getCurrentUserInfo() {
-        var a = SecurityContextHolder.getContext().getAuthentication();
-        User targetUser = (User) a.getPrincipal();
-        return postMapper.userToUserShortDto(targetUser);
+    public UserShortDto getCurrentUserInfo(User user) {
+        return postMapper.userToUserShortDto(user);
     }
 
     @Transactional
